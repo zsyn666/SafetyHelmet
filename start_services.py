@@ -3,15 +3,20 @@ import os
 import sys
 import subprocess
 import signal
+import platform
+
+def kill_streamlit_process():
+    try:
+        if platform.system() == "Windows":
+            subprocess.run(["taskkill", "/F", "/IM", "streamlit.exe"], check=False)
+        else:
+            subprocess.run(["pkill", "-f", "streamlit"], check=False)
+    except:
+        pass
 
 def signal_handler(signum, frame):
     print("\n🛑 接收到停止信号，正在关闭服务...")
-    
-    try:
-        subprocess.run(["pkill", "-f", "streamlit"], check=False)
-    except:
-        pass
-    
+    kill_streamlit_process()
     print("✅ 服务已停止")
     sys.exit(0)
 
@@ -55,7 +60,7 @@ def main():
         except:
             pass
         
-        subprocess.run(["pkill", "-f", "streamlit"], check=False)
+        kill_streamlit_process()
     
     return 0
 
